@@ -67,25 +67,38 @@ const parser = new ArgParser({
 	version: packageJson.version,
 });
 
-const cli = parser.parse(process.argv.slice(2));
+function main() {
+	try {
+		const cli = parser.parse(process.argv.slice(2));
 
-if (cli.help) {
-	console.log(cli.help);
-	process.exit(0);
+		if (cli.help) {
+			console.log(cli.help);
+			process.exit(0);
+		}
+
+		if (cli.version) {
+			console.log(cli.version);
+			process.exit(0);
+		}
+
+		render(
+			<App
+				targetBranch={cli.flags.target}
+				allowEmpty={cli.flags.allowEmpty}
+				linear={cli.flags.linear}
+				continueOnConflict={cli.flags.continueOnConflict}
+				remoteTarget={cli.flags.remoteTarget}
+				onConflict={cli.flags.onConflict}
+			/>,
+		);
+	} catch (err) {
+		if (err instanceof Error) {
+			console.error(`❌ ${err.message}`);
+		} else {
+			console.error("❌ Unknown error:", err);
+		}
+		process.exit(1);
+	}
 }
 
-if (cli.version) {
-	console.log(cli.version);
-	process.exit(0);
-}
-
-render(
-	<App
-		targetBranch={cli.flags.target}
-		allowEmpty={cli.flags.allowEmpty}
-		linear={cli.flags.linear}
-		continueOnConflict={cli.flags.continueOnConflict}
-		remoteTarget={cli.flags.remoteTarget}
-		onConflict={cli.flags.onConflict}
-	/>,
-);
+main();

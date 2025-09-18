@@ -345,6 +345,14 @@ export default function App({
 	]);
 
 	const handleBranchSelect = (item: { label: string; value: string }) => {
+		if (!item?.value) {
+			setState((prev) => ({
+				...prev,
+				status: "error",
+				message: "No valid branch selected. Please try again.",
+			}));
+			return;
+		}
 		if (state.currentBranch) {
 			if (linear) {
 				performLinearRebase(state.currentBranch, item.value);
